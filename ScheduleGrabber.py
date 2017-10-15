@@ -31,7 +31,7 @@ def get_pitching_day(data):
     return current_week[days_sep+1]
 
 def get_day_info(day, info_file="ThrowingInfo.csv"):
-    data = csv.reader(open(info_file,'r'),delimiter=',')
+    data = csv.reader(open(files_path+info_file,'r'),delimiter=',')
     data = [d for d in data]
     data_fit = []
 
@@ -90,10 +90,11 @@ def push_day(pitching_day, with_info):
     requests.post('https://api.pushbullet.com/v2/pushes', headers=headers, data=data, auth=('o.V8x8MqKcPdMqkuot9W3COnIwg5JqPciX', ''))
 
 
+files_path = "/home/ec2-user/ThrowingSchedule/"
 include_info = True
 schedule_file = "ThrowingSchedule.csv"
 
-with open(schedule_file, 'r') as r:
+with open(files_path+schedule_file, 'r') as r:
     data = csv.reader(r,delimiter=',')
     pitching_day = get_pitching_day(data)
     push_day(pitching_day, include_info)
