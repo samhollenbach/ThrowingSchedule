@@ -12,7 +12,7 @@ def closest_date(dates, today):
             closest = d
     return (closest, (today-closest).days)
 
-with open("Throwing Schedule.csv", "r") as r:
+with open("ThrowingSchedule.csv", "r") as r:
     reader = csv.reader(r,delimiter=',')
     dates = []
     weeks = []
