@@ -71,9 +71,14 @@ def get_day_info(day, info_file="ThrowingInfo.csv"):
 
 def push_day(pitching_day, with_info):
     day_info = get_day_info(pitching_day)
-    info_string = "{}".format(pitching_day)
+
+    title = "Throwing Day, {}".format(datetime.date.today().strftime("%A %m/%d/%y"))
+    info_string = ""
+    title += ": {}".format(pitching_day)
+
     if with_info:
-        info_string += "\\n\\n"
+
+        info_string += "\\n"
         if day_info is None:
             info_string += "No info available"
         else:
@@ -82,12 +87,15 @@ def push_day(pitching_day, with_info):
                 for i,e in enumerate(info):
                     if e != '':
                         if i is 0:
-                            info_string += " {}".format(e)
-                        else:
+                            info_string += "• {}".format(e)
+                        elif i is 1:
                             info_string += ", {}".format(e)
+                        else:
+                            info_string += "x {}".format(e)
                 info_string += "\\n"
+
     headers = {'Content-Type': 'application/json',}
-    data = '{{"type": "note", "title": "Throwing Day {}", "body": "{}"}}'.format(datetime.date.today().strftime("%m/%d/%y"), info_string)
+    data = '{{"type": "note", "title": "{}", "body": "{}"}}'.format(title,info_string)
     requests.post('https://api.pushbullet.com/v2/pushes', headers=headers, data=data.encode('utf-8'), auth=('o.V8x8MqKcPdMqkuot9W3COnIwg5JqPciX', ''))
 
 
