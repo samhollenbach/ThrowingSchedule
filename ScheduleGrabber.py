@@ -81,13 +81,14 @@ def push_day(pitching_day, with_info):
                 info = list(filter(lambda a: a != '', info))
                 for i,e in enumerate(info):
                     if e != '':
-                        info_string += "{}".format(e)
-                        if i is not len(info)-1:
-                            info_string += ", "
+                        if i is 0:
+                            info_string += " {}".format(e)
+                        else:
+                            info_string += ", {}".format(e)
                 info_string += "\\n"
     headers = {'Content-Type': 'application/json',}
-    data = '{{"type": "note", "title": "Throwing Day {}", "body": "{}"}}'.format(datetime.date.today().strftime("%m/%d/%y"), info_string)
-    requests.post('https://api.pushbullet.com/v2/pushes', headers=headers, data=data, auth=('o.V8x8MqKcPdMqkuot9W3COnIwg5JqPciX', ''))
+    data = '{{"type": "note", "title": "Throwing Day {}", "body": "{}", "channel_tag" : "throwing"}}'.format(datetime.date.today().strftime("%m/%d/%y"), info_string)
+    requests.post('https://api.pushbullet.com/v2/pushes', headers=headers, data=data.encode('utf-8'), auth=('o.V8x8MqKcPdMqkuot9W3COnIwg5JqPciX', ''))
 
 
 files_path = "/home/ec2-user/ThrowingSchedule/"
