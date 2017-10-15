@@ -82,16 +82,21 @@ def push_day(pitching_day, with_info):
         if day_info is None:
             info_string += "No info available"
         else:
-            for info in day_info[1:]:
+            info_string += "*{}*\\n".format(day_info[1][0])
+            for info in day_info[2:]:
+                if not info or info[0] == "Exercise":
+                    continue
+
                 info = list(filter(lambda a: a != '', info))
                 for i,e in enumerate(info):
                     if e != '':
                         if i is 0:
                             info_string += "\u2022 {}".format(e)
-                        elif i is 1:
-                            info_string += ", {}".format(e)
-                        else:
+                        elif i is 2:
                             info_string += "x {}".format(e)
+
+                        else:
+                            info_string += ", {}".format(e)
                 info_string += "\\n"
 
     headers = {'Content-Type': 'application/json',}
@@ -100,7 +105,7 @@ def push_day(pitching_day, with_info):
 
 
 files_path = "/home/ec2-user/ThrowingSchedule/"
-files_path = ""
+#files_path = ""
 include_info = True
 schedule_file = "ThrowingSchedule.csv"
 
