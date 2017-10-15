@@ -87,7 +87,7 @@ def push_day(pitching_day, with_info):
                 for i,e in enumerate(info):
                     if e != '':
                         if i is 0:
-                            info_string += "• {}".format(e)
+                            info_string += "\u2022 {}".format(e)
                         elif i is 1:
                             info_string += ", {}".format(e)
                         else:
@@ -100,6 +100,7 @@ def push_day(pitching_day, with_info):
 
 
 files_path = "/home/ec2-user/ThrowingSchedule/"
+files_path = ""
 include_info = True
 schedule_file = "ThrowingSchedule.csv"
 
