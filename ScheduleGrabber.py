@@ -33,7 +33,7 @@ with open("Throwing Schedule.csv", "r") as r:
         'Content-Type': 'application/json',
     }
 
-    data = '{{"type": "note", "title": "Throwing Day {}", "body": "{}"}}'.format(today.strftime("%d/%m/%y"), current_day)
+    data = '{{"type": "note", "title": "Throwing Day {}", "body": "{}"}}'.format(today.strftime("%m/%d/%y"), current_day)
 
 
     requests.post('https://api.pushbullet.com/v2/pushes', headers=headers, data=data, auth=('o.V8x8MqKcPdMqkuot9W3COnIwg5JqPciX', ''))
