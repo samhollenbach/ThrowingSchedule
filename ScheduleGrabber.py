@@ -87,7 +87,7 @@ def push_day(pitching_day, with_info):
                             info_string += ", {}".format(e)
                 info_string += "\\n"
     headers = {'Content-Type': 'application/json',}
-    data = '{{"type": "note", "title": "Throwing Day {}", "body": "{}", "channel_tag" : "throwing"}}'.format(datetime.date.today().strftime("%m/%d/%y"), info_string)
+    data = '{{"type": "note", "title": "Throwing Day {}", "body": "{}"}}'.format(datetime.date.today().strftime("%m/%d/%y"), info_string)
     requests.post('https://api.pushbullet.com/v2/pushes', headers=headers, data=data.encode('utf-8'), auth=('o.V8x8MqKcPdMqkuot9W3COnIwg5JqPciX', ''))
 
 
