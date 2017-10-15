@@ -74,14 +74,17 @@ def push_day(pitching_day, with_info):
     info_string = "{}".format(pitching_day)
     if with_info:
         info_string += "\\n\\n"
-        for info in day_info[1:]:
-            info = list(filter(lambda a: a != '', info))
-            for i,e in enumerate(info):
-                if e != '':
-                    info_string += "{}".format(e)
-                    if i is not len(info)-1:
-                        info_string += ", "
-            info_string += "\\n"
+        if day_info is None:
+            info_string += "No info available"
+        else:
+            for info in day_info[1:]:
+                info = list(filter(lambda a: a != '', info))
+                for i,e in enumerate(info):
+                    if e != '':
+                        info_string += "{}".format(e)
+                        if i is not len(info)-1:
+                            info_string += ", "
+                info_string += "\\n"
     headers = {'Content-Type': 'application/json',}
     data = '{{"type": "note", "title": "Throwing Day {}", "body": "{}"}}'.format(datetime.date.today().strftime("%m/%d/%y"), info_string)
     requests.post('https://api.pushbullet.com/v2/pushes', headers=headers, data=data, auth=('o.V8x8MqKcPdMqkuot9W3COnIwg5JqPciX', ''))
