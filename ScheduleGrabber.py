@@ -86,8 +86,10 @@ def push_day(pitching_day, with_info):
             for info in day_info[2:]:
                 if not info or info[0] == "Exercise":
                     continue
-
                 info = list(filter(lambda a: a != '', info))
+                if len(info) is 1:
+                    info_string += "--{}--\\n".format(info[0])
+                    continue
                 for i,e in enumerate(info):
                     if e != '':
                         if i is 0:
