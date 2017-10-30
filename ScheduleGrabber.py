@@ -69,15 +69,14 @@ def get_day_info(day, info_file="ThrowingInfo.csv"):
             return d
 
 
-def push_day(pitching_day, with_info):
+def push_day(pitching_day, token, info_type):
     day_info = get_day_info(pitching_day)
 
     title = "Throwing Day, {}".format(datetime.date.today().strftime("%A %m/%d/%y"))
     info_string = ""
     title += ": {}".format(pitching_day)
-
-    if with_info:
-
+    if info_type is not 0:
+        collect = True
         info_string += "\\n"
         if day_info is None:
             info_string += "No info available"
@@ -88,10 +87,14 @@ def push_day(pitching_day, with_info):
                     continue
                 info = list(filter(lambda a: a != '', info))
                 if len(info) is 1:
-                    info_string += "--{}--\\n".format(info[0])
+                    if info_type is 1 and info[0] != "Throwing":
+                        collect = False
+                    else:
+                        collect = True
+                        info_string += "--{}--\\n".format(info[0])
                     continue
                 for i,e in enumerate(info):
-                    if e != '':
+                    if e != '' and collect:
                         if i is 0:
                             info_string += "\u2022 {}".format(e)
                         elif i is 2:
@@ -99,20 +102,36 @@ def push_day(pitching_day, with_info):
 
                         else:
                             info_string += ", {}".format(e)
-                info_string += "\\n"
-
+                if collect:
+                    info_string += "\\n"
     headers = {'Content-Type': 'application/json',}
     data = '{{"type": "note", "title": "{}", "body": "{}"}}'.format(title,info_string)
-    requests.post('https://api.pushbullet.com/v2/pushes', headers=headers, data=data.encode('utf-8'), auth=('o.V8x8MqKcPdMqkuot9W3COnIwg5JqPciX', ''))
+    requests.post('https://api.pushbullet.com/v2/pushes', headers=headers, data=data.encode('utf-8'), auth=(token, ''))
+
+def push_to(file_path,name,token,with_info):
+    schedule_file = "{}Schedules/{} - Throwing Schedule.csv".format(files_path,name)
+    with open(schedule_file, 'r') as r:
+        data = csv.reader(r,delimiter=',')
+        pitching_day = get_pitching_day(data)
+        push_day(pitching_day, token, with_info)
+
 
 
 files_path = "/home/ec2-user/ThrowingSchedule/"
-#files_path = ""
-include_info = True
-schedule_file = "ThrowingSchedule.csv"
+files_path = ""
+config_file = "PushConfig.csv"
 
-with open(files_path+schedule_file, 'r') as r:
+
+with open(files_path+config_file, 'r') as r:
     data = csv.reader(r,delimiter=',')
-    pitching_day = get_pitching_day(data)
-    push_day(pitching_day, include_info)
+
+    header = next(data)
+    for d in data:
+        if d[1] == '':
+            print("No auth token found")
+            continue
+        push_to(files_path,d[0],d[1],int(d[2]))
+
+
+
 
