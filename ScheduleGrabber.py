@@ -118,7 +118,7 @@ def push_to(file_path,name,token,with_info):
 
 
 files_path = "/home/ec2-user/ThrowingSchedule/"
-files_path = ""
+#files_path = ""
 config_file = "PushConfig.csv"
 
 
