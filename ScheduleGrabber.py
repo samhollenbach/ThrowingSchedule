@@ -13,7 +13,9 @@ def closest_date(dates, today):
             closest = d
     return (closest, (today-closest).days)
 
-def get_pitching_day(data):
+
+
+def get_pitching_days_from_date(pitching_date, data):
     dates = []
     weeks = []
     for l in data:
@@ -24,11 +26,15 @@ def get_pitching_day(data):
             date = datetime.date(date_split[2],date_split[0],date_split[1])
             dates.append(date)
             weeks.append([date] + l[1:8])
-    today = datetime.date.today()
-    sunday_day, days_sep = closest_date(dates,today)
+
+    return get_pitching_day(weeks, dates, pitching_date), get_pitching_day(weeks, dates, pitching_date+datetime.timedelta(days=1))
+
+def get_pitching_day(weeks, dates, pitching_date):
+    sunday_day, days_sep = closest_date(dates,pitching_date)
     week_index = [w[0] for w in weeks].index(sunday_day)
     current_week = weeks[week_index]
     return current_week[days_sep+1]
+
 
 def get_day_info(day, info_file="ThrowingInfo.csv"):
     data = csv.reader(open(files_path+info_file,'r'),delimiter=',')
@@ -69,7 +75,7 @@ def get_day_info(day, info_file="ThrowingInfo.csv"):
             return d
 
 
-def push_day(pitching_day, token, info_type):
+def push_day(pitching_day, token, info_type, next_day):
     day_info = get_day_info(pitching_day)
 
     title = "Throwing Day, {}".format(datetime.date.today().strftime("%A %m/%d/%y"))
@@ -104,16 +110,20 @@ def push_day(pitching_day, token, info_type):
                             info_string += ", {}".format(e)
                 if collect:
                     info_string += "\\n"
+
+    if next_day != "":
+        info_string += "\\n*Tomorrow: {}*".format(next_day)
+
     headers = {'Content-Type': 'application/json',}
     data = '{{"type": "note", "title": "{}", "body": "{}"}}'.format(title,info_string)
     requests.post('https://api.pushbullet.com/v2/pushes', headers=headers, data=data.encode('utf-8'), auth=(token, ''))
 
 def push_to(file_path,name,token,with_info):
-    schedule_file = "{}Schedules/{} - Throwing Schedule.csv".format(files_path,name)
+    schedule_file = "{}Schedules/{} - Throwing Schedule.csv".format(file_path,name)
     with open(schedule_file, 'r') as r:
         data = csv.reader(r,delimiter=',')
-        pitching_day = get_pitching_day(data)
-        push_day(pitching_day, token, with_info)
+        pitching_day, next_day = get_pitching_days_from_date(datetime.date.today(),data)
+        push_day(pitching_day, token, with_info, next_day)
 
 
 
